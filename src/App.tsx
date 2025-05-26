@@ -46,6 +46,7 @@ const AppContent: React.FC = () => {
     hasNextPage,
     searchRepositories,
     loadMore,
+    currentSearchTerm,
   } = useRepositories();
 
   return (
@@ -68,6 +69,7 @@ const AppContent: React.FC = () => {
         totalCount={totalCount}
         hasNextPage={hasNextPage}
         onLoadMore={loadMore}
+        currentSearchTerm={currentSearchTerm}
       />
     </AppContainer>
   );

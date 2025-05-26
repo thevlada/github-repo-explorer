@@ -13,9 +13,11 @@ interface UseRepositoriesResult {
   searchRepositories: (searchTerm: string) => void;
   loadMore: () => void;
   refetch: () => void;
+  currentSearchTerm: string;
 }
 
 export const useRepositories = (): UseRepositoriesResult => {
+  const [currentSearchTerm, setCurrentSearchTerm] = useState('react');
   const [variables, setVariables] = useState<SearchVariables>({
     query: 'react in:name sort:stars-desc',
     first: 20,
@@ -27,12 +29,19 @@ export const useRepositories = (): UseRepositoriesResult => {
   >(SEARCH_REPOSITORIES, {
     variables,
     notifyOnNetworkStatusChange: true,
+    skip: !variables.query, // Skip query if no search term
   });
 
   const searchRepositories = useCallback((newSearchTerm: string) => {
-    const newQuery = newSearchTerm
-      ? `${newSearchTerm} in:name sort:stars-desc`
-      : 'react in:name sort:stars-desc';
+    setCurrentSearchTerm(newSearchTerm);
+
+    // If search term is empty, don't perform search
+    if (!newSearchTerm.trim()) {
+      setVariables({ query: '', first: 20 });
+      return;
+    }
+
+    const newQuery = `${newSearchTerm.trim()} in:name sort:stars-desc`;
 
     setVariables({
       query: newQuery,
@@ -41,7 +50,7 @@ export const useRepositories = (): UseRepositoriesResult => {
   }, []);
 
   const loadMore = useCallback(() => {
-    if (data?.search.pageInfo.hasNextPage) {
+    if (data?.search.pageInfo.hasNextPage && variables.query) {
       fetchMore({
         variables: {
           ...variables,
@@ -71,5 +80,6 @@ export const useRepositories = (): UseRepositoriesResult => {
     searchRepositories,
     loadMore,
     refetch,
+    currentSearchTerm,
   };
 };

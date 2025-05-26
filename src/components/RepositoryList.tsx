@@ -29,6 +29,12 @@ const StatsContainer = styled(Box)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
 }));
 
+const EmptyStateContainer = styled(Box)(({ theme }) => ({
+  textAlign: 'center',
+  padding: theme.spacing(4),
+  color: theme.palette.text.secondary,
+}));
+
 interface RepositoryListProps {
   repositories: Repository[];
   loading: boolean;
@@ -36,6 +42,7 @@ interface RepositoryListProps {
   totalCount: number;
   hasNextPage: boolean;
   onLoadMore: () => void;
+  currentSearchTerm: string;
 }
 
 const RepositoryListSkeleton: React.FC = () => (
@@ -55,6 +62,7 @@ export const RepositoryList: React.FC<RepositoryListProps> = ({
   totalCount,
   hasNextPage,
   onLoadMore,
+  currentSearchTerm,
 }) => {
   if (error) {
     return (
@@ -62,6 +70,21 @@ export const RepositoryList: React.FC<RepositoryListProps> = ({
         <Alert severity="error" sx={{ marginBottom: 2 }}>
           Error loading repositories: {error.message}
         </Alert>
+      </ListContainer>
+    );
+  }
+
+  if (!currentSearchTerm.trim()) {
+    return (
+      <ListContainer>
+        <EmptyStateContainer>
+          <Typography variant="h6" gutterBottom>
+            Start typing to search repositories
+          </Typography>
+          <Typography variant="body2">
+            Enter at least 3 characters to begin searching GitHub repositories
+          </Typography>
+        </EmptyStateContainer>
       </ListContainer>
     );
   }
@@ -74,11 +97,12 @@ export const RepositoryList: React.FC<RepositoryListProps> = ({
     );
   }
 
-  if (repositories.length === 0) {
+  if (repositories.length === 0 && !loading) {
     return (
       <ListContainer>
         <Alert severity="info">
-          No repositories found. Try a different search term.
+          No repositories found for "{currentSearchTerm}". Try a different
+          search term.
         </Alert>
       </ListContainer>
     );
@@ -88,8 +112,8 @@ export const RepositoryList: React.FC<RepositoryListProps> = ({
     <ListContainer>
       <StatsContainer>
         <Typography variant="body2" color="text.secondary">
-          Found {totalCount.toLocaleString()} repositories • Showing{' '}
-          {repositories.length}
+          Found {totalCount.toLocaleString()} repositories for "
+          {currentSearchTerm}" • Showing {repositories.length}
         </Typography>
       </StatsContainer>
 
