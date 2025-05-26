@@ -25,7 +25,7 @@ A modern React application for exploring and searching GitHub repositories with 
 
 ## 📋 Prerequisites
 
-- Node.js 16+ and npm
+- Node.js 22+ and npm
 - GitHub Personal Access Token (see setup instructions below)
 - Docker (optional, for containerization)
 
