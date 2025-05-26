@@ -26,8 +26,8 @@ A modern React application for exploring and searching GitHub repositories with 
 ## 📋 Prerequisites
 
 - Node.js 16+ and npm
+- GitHub Personal Access Token (see setup instructions below)
 - Docker (optional, for containerization)
-- GitHub Personal Access Token (already configured)
 
 ## 🚀 Quick Start
 
@@ -44,12 +44,32 @@ A modern React application for exploring and searching GitHub repositories with 
    npm install
    ```
 
-3. **Start the development server**
+3. **Set up environment variables**
+   
+   Create a `.env` file in the root directory:
+   ```bash
+   cp .env.example .env
+   ```
+   
+   Then edit `.env` and add your GitHub Personal Access Token:
+   ```env
+   REACT_APP_GITHUB_TOKEN=your_github_personal_access_token_here
+   ```
+   
+   **To get a GitHub Personal Access Token:**
+   - Go to [GitHub Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens)
+   - Click "Generate new token (classic)"
+   - Give it a descriptive name (e.g., "GitHub Repo Explorer")
+   - Select the `public_repo` scope (or `repo` for private repositories)
+   - Click "Generate token"
+   - Copy the token and paste it in your `.env` file
+
+4. **Start the development server**
    ```bash
    npm start
    ```
 
-4. **Open your browser**
+5. **Open your browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
 
 ### Production Build
@@ -62,17 +82,20 @@ serve -s build
 
 ### Docker Deployment
 
-1. **Build the Docker image**
+1. **Set up environment variables**
+   Make sure your `.env` file is configured with your GitHub token (see step 3 above)
+
+2. **Build the Docker image**
    ```bash
-   docker build -t github-repo-explorer .
+   docker build --build-arg REACT_APP_GITHUB_TOKEN=$(grep REACT_APP_GITHUB_TOKEN .env | cut -d '=' -f2) -t github-repo-explorer .
    ```
 
-2. **Run the container**
+3. **Run the container**
    ```bash
    docker run -p 8080:80 github-repo-explorer
    ```
 
-3. **Access the application**
+4. **Access the application**
    Navigate to [http://localhost:8080](http://localhost:8080)
 
 ## 📁 Project Structure
@@ -144,12 +167,14 @@ The application features an intelligent search system:
 
 ## 🔑 API Configuration
 
-The application uses GitHub's GraphQL API v4 with a Personal Access Token. The token is currently hardcoded for development purposes but should be moved to environment variables for production:
+The application uses GitHub's GraphQL API v4 with a Personal Access Token stored in environment variables:
 
 ```typescript
-// In production, use:
+// Environment variable usage
 const token = process.env.REACT_APP_GITHUB_TOKEN;
 ```
+
+**Security Note**: Never commit your `.env` file to version control. The `.env` file is included in `.gitignore` to prevent accidental commits.
 
 ## 🐳 Docker Configuration
 
@@ -158,6 +183,8 @@ The application includes a multi-stage Dockerfile for optimized production build
 - **Build Stage**: Installs dependencies and builds the React application
 - **Production Stage**: Serves the built application with Nginx
 - **Optimizations**: Minimal Alpine Linux images, static asset caching
+
+**Environment Variables in Docker**: Use `--env-file .env` when running the container to pass environment variables.
 
 ## 🤝 Contributing
 

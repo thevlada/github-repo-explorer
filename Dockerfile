@@ -12,6 +12,10 @@ RUN npm ci
 # Copy source code
 COPY . .
 
+# Build argument for GitHub token
+ARG REACT_APP_GITHUB_TOKEN
+ENV REACT_APP_GITHUB_TOKEN=$REACT_APP_GITHUB_TOKEN
+
 # Build the application
 RUN npm run build
 
