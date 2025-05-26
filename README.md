@@ -4,7 +4,7 @@ A modern React application for exploring and searching GitHub repositories with 
 
 ## 🚀 Features
 
-- **Repository Search**: Search for repositories by name with flexible search terms
+- **Smart Search**: Search-as-you-type with debouncing after 3 characters (500ms delay)
 - **Real-time Data**: Fetches live data from GitHub's GraphQL API v4
 - **Responsive Design**: Modern, mobile-friendly UI built with Material UI
 - **Pagination**: Load more repositories with infinite scroll-like pagination
@@ -80,7 +80,7 @@ serve -s build
 ```
 src/
 ├── components/          # React components
-│   ├── SearchBar.tsx   # Search input component
+│   ├── SearchBar.tsx   # Search input with debouncing
 │   ├── RepositoryItem.tsx  # Individual repository card
 │   └── RepositoryList.tsx  # Repository list with pagination
 ├── hooks/              # Custom React hooks
@@ -104,6 +104,16 @@ src/
 - `npm run lint:fix` - Fix ESLint issues
 - `npm run format` - Format code with Prettier
 
+## 🔍 Search Functionality
+
+The application features an intelligent search system:
+
+- **Minimum Characters**: Search begins after typing 3 characters
+- **Debouncing**: 500ms delay to prevent excessive API calls
+- **Real-time Results**: Automatic search as you type
+- **Visual Feedback**: Helper text guides users on minimum requirements
+- **Empty State Handling**: Clear messaging when no search term is entered
+
 ## 🎨 Design Decisions
 
 ### Architecture
@@ -120,6 +130,11 @@ src/
 - **Apollo Client**: Efficient GraphQL client with caching and error handling
 - **Type Safety**: Full TypeScript integration for API responses and component props
 - **Error Boundaries**: Graceful error handling with user-friendly messages
+
+### Search Optimization
+- **Debouncing**: Prevents API spam while maintaining responsive feel
+- **Minimum Character Threshold**: Reduces meaningless searches
+- **Smart State Management**: Handles empty states and loading gracefully
 
 ### Code Quality
 - **ESLint**: Enforces coding standards and catches potential issues
